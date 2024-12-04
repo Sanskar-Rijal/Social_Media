@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "687661786705",
+    "project_id": "aprily-1c321",
+    "storage_bucket": "aprily-1c321.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687661786705:android:ba964384263470b4d43a70",
+        "android_client_info": {
+          "package_name": "com.example.aprily"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAf7KH541sXzZxlaAugPUn-Ifa8d_4k6ks"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
