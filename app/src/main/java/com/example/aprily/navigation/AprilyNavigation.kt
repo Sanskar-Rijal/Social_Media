@@ -5,6 +5,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.aprily.screen.auth.SignupScreen
 //import com.example.aprily.screen.auth.LoginScreen
 import com.example.aprily.screen.auth.authViewModel
 
@@ -15,11 +16,11 @@ fun AprilyNavigation(authViewModel: authViewModel= hiltViewModel()){
 
     //now making a Navhost
     NavHost(navController=navController,
-        startDestination = AprilyScreen.LoginScreen.name) {
+        startDestination = AprilyScreen.SignupScreen.name) {
 
         //making navgraphs
-        composable(AprilyScreen.LoginScreen.name){
-            //LoginScreen(navController,authViewModel)
+        composable(AprilyScreen.SignupScreen.name){
+            SignupScreen(navController,authViewModel)
         }
     }
 }

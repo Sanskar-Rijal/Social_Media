@@ -1,7 +1,7 @@
 package com.example.aprily.navigation
 
 enum class AprilyScreen{
-    LoginScreen;
+    SignupScreen;
     companion object{
 
     }
