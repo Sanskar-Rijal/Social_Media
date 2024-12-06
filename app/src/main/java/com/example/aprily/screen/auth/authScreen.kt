@@ -4,11 +4,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.content.contentReceiver
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -50,9 +52,31 @@ import androidx.compose.ui.util.trace
 import androidx.navigation.NavController
 import com.example.aprily.R
 
+
 @Composable
 fun SignupScreen(navController: NavController,authvm:authViewModel) {
-        Scaffold{
+    //we will have 3 states
+    val usernameState = remember {
+        mutableStateOf("")
+    }
+    val emailState = remember {
+        mutableStateOf("")
+    }
+    val PasswordState = remember {
+        mutableStateOf("")
+    }
+
+    /**
+     * checking whether the input inside
+     * text field are empty or not by making a state
+     */
+    val valid =
+        remember(usernameState.value) { //we are checking whether usernameState.value is empty or not
+            usernameState.value.trim()
+                .isNotEmpty() //if it's not empty then it will return true
+        }
+
+    Scaffold {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -62,29 +86,9 @@ fun SignupScreen(navController: NavController,authvm:authViewModel) {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            //we will have 3 states
-            val usernameState = remember {
-                mutableStateOf("")
-            }
-            val emailState = remember {
-                mutableStateOf("")
-            }
-            val PasswordState = remember {
-                mutableStateOf("")
-            }
 
-            /**
-             * checking whether the input inside
-             * text field are empty or not by making a state
-             */
-            val valid =
-                remember(usernameState.value) { //we are checking whether usernameState.value is empty or not
-                    usernameState.value.trim()
-                        .isNotEmpty() //if it's not empty then it will return true
-                }
-
-
-            val aprilyIcon: Painter = painterResource(R.drawable.aprilywhite)
+            val aprilyIcon: Painter = if(isSystemInDarkTheme()) painterResource(R.drawable.aprilywhite) else
+                painterResource(R.drawable.aprily)
             Image(
                 painter = aprilyIcon,
                 contentDescription = "APRILY",
@@ -93,68 +97,76 @@ fun SignupScreen(navController: NavController,authvm:authViewModel) {
                     .padding(8.dp)
                     .width(250.dp)
             )
+            Column(modifier = Modifier.padding(top = 50.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "Signup",
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    fontSize = 30.sp,
+                    fontFamily = FontFamily.SansSerif
+                )
 
-            Text(
-                text = "Signup",
-                modifier = Modifier.padding(bottom = 8.dp),
-                fontSize = 30.sp,
-                fontFamily = FontFamily.SansSerif
-            )
+                TextField(
+                    valueState = usernameState,
+                    placeholder = "Username"
+                )
+                TextField(
+                    valueState = emailState,
+                    placeholder = "Email"
+                )
+                TextField(
+                    valueState = PasswordState,
+                    placeholder = "Password",
+                    visualTransformation = PasswordVisualTransformation(),
+                    imeAction = ImeAction.Done
+                )
 
-            TextField(
-                valueState = usernameState,
-                placeholder = "Username"
-            )
-            TextField(
-                valueState = emailState,
-                placeholder = "Email"
-            )
-            TextField(
-                valueState = PasswordState,
-                placeholder = "Password",
-                visualTransformation = PasswordVisualTransformation(),
-                imeAction = ImeAction.Done
-            )
-
-            Row(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Button(
-                    onClick = {},
-                    modifier = Modifier.padding(8.dp),
+                Row(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = "SIGN UP",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Button(
+                        onClick = {
+                             authvm.onSignup(
+                                 usernameState.value,
+                                 emailState.value,
+                                 PasswordState.value
+                             )
+                        },
+                        modifier = Modifier.padding(8.dp),
+                    ) {
+                        Text(
+                            text = "SIGN UP",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
-            }
 
-            Text(
-                text = "Already a user? Go to Login ->",
-                color = Color.LightGray,
-                modifier = Modifier.padding(8.dp)
-                    .clickable { },
-                fontSize = 15.sp
-            )
+                Text(
+                    text = "Already a user? Go to Login ->",
+                    color = Color.LightGray,
+                    modifier = Modifier.padding(8.dp)
+                        .clickable { },
+                    fontSize = 15.sp
+                )
+            }
         }
     }
 }
 
 
-
 @Composable
 fun TextField(
-     valueState:MutableState<String>,
-     placeholder:String,
-     keyboardType: KeyboardType= KeyboardType.Text,
-     imeAction: ImeAction=ImeAction.Next,
-     onAction:KeyboardActions=KeyboardActions.Default,
-     visualTransformation: VisualTransformation=VisualTransformation.None
+    valueState:MutableState<String>,
+    placeholder:String,
+    keyboardType: KeyboardType= KeyboardType.Text,
+    imeAction: ImeAction=ImeAction.Next,
+    onAction:KeyboardActions=KeyboardActions.Default,
+    visualTransformation: VisualTransformation=VisualTransformation.None
 ){
 
     OutlinedTextField(value =valueState.value,
@@ -177,4 +189,3 @@ fun TextField(
     )
 
 }
-
