@@ -3,8 +3,9 @@ package com.example.aprily.screen.auth
 import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.aprily.data.Event
 import com.example.aprily.data.UserData
-import com.example.aprily.repository.AuthRepository
+//import com.example.aprily.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -16,27 +17,27 @@ const val USERS ="users"
 @HiltViewModel
 class authViewModel @Inject constructor(private val auth: FirebaseAuth,
                                         private val db: FirebaseFirestore,
-                                        private val storage: FirebaseStorage
-):ViewModel() {
+                                        private val storage: FirebaseStorage):ViewModel()  {
 
-    val SignedIn= mutableStateOf(false)
+    val SignedIn = mutableStateOf(false)
     val inProgress = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
 
+    val popupNotification = mutableStateOf<Event<String>?>(null)
 
-    fun onSignup(username:String,email:String,password:String){
+
+    fun onSignup(username: String, email: String, password: String) {
         //weneed to check whether useris unique or not
-        inProgress.value=true
-        db.collection(USERS).whereEqualTo("username",username).get().addOnSuccessListener {doc->
+        inProgress.value = true
+        db.collection(USERS).whereEqualTo("username", username).get().addOnSuccessListener { doc ->
             //checking whether doc is empty or not
             //if it's empty we don't have user
-            if(doc.size()>0){
+            if (doc.size() > 0) {
                 handleException(CustomMsg = "Username already Exists")
-                inProgress.value=false
-            }
-            else{
+                inProgress.value = false
+            } else {
                 //username is not in the database
-                auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener {task->
+                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                     /**
                      * The task object is an instance of Task<T>, provided by Firebase. It represents the result of an asynchronous operation.
                      *     Key properties of task:
@@ -44,26 +45,32 @@ class authViewModel @Inject constructor(private val auth: FirebaseAuth,
                      *         exception: Provides the exception that caused the failure if the task was not successful.
                      *         result: Retrieves the result of the task if it was successful (e.g., user details for an authentication task).
                      */
-                    if(task.isSuccessful)
-                        SignedIn.value=true//since it's success we will create an account
-                    else{
+                    if (task.isSuccessful)
+                        SignedIn.value = true//since it's success we will create an account
+                    else {
                         handleException(task.exception, "SignUp failed")
-                        inProgress.value=false
+                        inProgress.value = false
                     }
 
-                    inProgress.value=false
+                    inProgress.value = false
                 }
             }
 
         }
-            .addOnFailureListener{
+            .addOnFailureListener {
 
             }
     }
 
-    fun handleException(exception: Exception?=null,CustomMsg:String?=""){
 
+    //mutable state displays the same message again and again so we will not be usgin mutablestate
+    //so we will create a special data type that will only allow us to display msg once
+    //we will make a class Event
+    fun handleException(exception: Exception? = null, CustomMsg: String  = "") {
+
+        exception?.printStackTrace()
+        val errormessage =exception?.localizedMessage ?: " " //if thats a null then we will have a empty string
+        val message = if (CustomMsg.isEmpty()) errormessage else "$CustomMsg : $errormessage"
+        popupNotification.value = Event(message)
     }
-
-
 }
