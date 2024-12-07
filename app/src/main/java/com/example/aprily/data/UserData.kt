@@ -10,10 +10,10 @@ data class UserData(
     var following:List<String>?=null
 ){
     fun toMap() = mapOf(
-        "userId" to userId,
+        "userid" to userId,
         "name" to name,
-        "userName" to userName,
-        "imageUrl" to imageUrl,
+        "username" to userName,
+        "imageurl" to imageUrl,
         "bio" to bio,
         "following" to following
     )
